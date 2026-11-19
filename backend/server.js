@@ -17,7 +17,7 @@ app.use(morgan("dev"));
 app.get("/test", (req, res) => {
   res.json({ message: "App Works" });
 });
-app.use("/product", productRoute);
+app.use("/products", productRoute);
 
 // connect to database and listen on Port 3000
 async function startServer() {
