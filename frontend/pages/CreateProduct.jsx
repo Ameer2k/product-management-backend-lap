@@ -1,6 +1,6 @@
 import { useState } from "react";
-import axios from "axios";
 import { useNavigate } from "react-router";
+import { createProduct } from "../src/services/productService";
 
 function CreateProduct() {
   const [formData, setFormData] = useState({
@@ -18,11 +18,7 @@ function CreateProduct() {
 
   async function handleSubmit(event) {
     event.preventDefault(); // Stops the form from refreshing and disables default behavior
-    // TODO: send POST request to the API with the student Data
-    await axios.post(
-      `${import.meta.env.VITE_BACKEND_SERVER_URL}/products`,
-      formData,
-    );
+    await createProduct(formData);
     navigate("/products");
   }
 

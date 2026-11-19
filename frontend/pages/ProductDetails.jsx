@@ -1,6 +1,9 @@
-import axios from "axios";
 import { useState, useEffect } from "react";
-import { useNavigate, useParams } from "react-router";
+import { Link, useNavigate, useParams } from "react-router";
+import {
+  deleteProduct as removeProduct,
+  getProduct,
+} from "../src/services/productService";
 
 function ProductDetails() {
   const [product, setProduct] = useState(null);
@@ -8,21 +11,16 @@ function ProductDetails() {
   const navigate = useNavigate();
 
   async function handleDeleteProduct() {
-    await axios.delete(
-      `${import.meta.env.VITE_BACKEND_SERVER_URL}/products/${productId}`,
-    );
-
+    await removeProduct(productId);
     navigate("/products");
   }
 
   useEffect(() => {
     let ignore = false;
 
-    axios
-      .get(`${import.meta.env.VITE_BACKEND_SERVER_URL}/products/${productId}`)
-      .then((response) => {
-        if (!ignore) setProduct(response.data);
-      });
+    getProduct(productId).then((response) => {
+      if (!ignore) setProduct(response);
+    });
 
     return () => {
       ignore = true;
@@ -39,6 +37,7 @@ function ProductDetails() {
           <p>category: {product.category}</p>
           <p>price: {product.price}</p>
           <p>quantity: {product.quantity}</p>
+          <Link to={`/products/${productId}/edit`}>Edit Product</Link>
           <button onClick={handleDeleteProduct}>Delete Product</button>
         </div>
       ) : null}
