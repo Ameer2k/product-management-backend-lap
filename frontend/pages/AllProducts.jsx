@@ -4,22 +4,35 @@ import { Link } from "react-router";
 
 function AllProducts() {
   const [products, setProducts] = useState([]);
-
-  async function getAllProducts() {
-    const response = await axios.get(
-      `${import.meta.env.VITE_BACKEND_SERVER_URL}/products`,
-    );
-    console.log(response.data);
-    setProducts(response.data);
-  }
+  const [error, setError] = useState("");
 
   useEffect(() => {
-    getAllProducts();
+    let ignore = false;
+
+    axios
+      .get(`${import.meta.env.VITE_BACKEND_SERVER_URL}/products`)
+      .then((response) => {
+        if (!ignore) setProducts(response.data);
+      })
+      .catch((requestError) => {
+        if (!ignore) {
+          setError(
+            requestError.response?.data?.message ??
+              requestError.message ??
+              "Failed to load products.",
+          );
+        }
+      });
+
+    return () => {
+      ignore = true;
+    };
   }, []);
 
   return (
     <div>
       <h2>All Products</h2>
+      {error && <p role="alert">{error}</p>}
       {products.map((oneProduct) => (
         <div key={oneProduct._id}>
           <p>Title:{oneProduct.title}</p>
